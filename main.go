@@ -21,6 +21,7 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"meta": &models.Meta{true, "success"}})
 	})
 	r.POST("/register", controllers.RegisterUser)
+	r.POST("/login", controllers.GenerateToken)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
