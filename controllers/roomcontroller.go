@@ -3,12 +3,13 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"test/database"
 	"test/models"
 )
 
 func GetAllRooms(c *gin.Context) {
-	building := c.Param("building")
+	building := strings.Replace(c.Param("building"), "-", " ", 1)
 	var rooms []models.Room
 	record := database.Db.Where("building = ?", building).Find(&rooms)
 
