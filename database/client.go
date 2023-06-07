@@ -4,6 +4,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	"os"
 	"test/models"
 )
 
@@ -11,7 +12,8 @@ var Db *gorm.DB
 var err error
 
 func Connect() {
-	dsn := "root:0he0dFqkGG738S8Eo9gc@tcp(containers-us-west-95.railway.app:6719)/railway?charset=utf8mb4&parseTime=True&loc=Local"
+	dbUrl := os.Getenv("DB_URL")
+	dsn := dbUrl
 	Db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("Cannot connect to DB")
