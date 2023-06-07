@@ -40,5 +40,5 @@ func GenerateToken(context *gin.Context) {
 		context.Abort()
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"meta": &models.Meta{true, "Success"}, "token": tokenString})
+	context.JSON(http.StatusOK, gin.H{"meta": &models.Meta{true, "Success"}, "data": &models.LoginResponse{tokenString}})
 }
