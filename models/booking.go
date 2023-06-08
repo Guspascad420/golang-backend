@@ -1,7 +1,9 @@
 package models
 
+import "gorm.io/gorm"
+
 type Booking struct {
-	ID          uint   `gorm:"primarykey"`
+	gorm.Model
 	Name        string `json:"name"`
 	Date        string `json:"date"`
 	Time        string `json:"time"`
