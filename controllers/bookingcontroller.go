@@ -27,7 +27,7 @@ func CreateBooking(c *gin.Context) {
 func GetBookingsByDate(c *gin.Context) {
 	date := strings.Replace(c.Query("date"), "-", "/", 2)
 	var bookings []models.Booking
-	record := database.Db.Where("date = ?", date).Find(&bookings)
+	record := database.Db.Where("date = ?", date).Preload("Room").Find(&bookings)
 
 	if record.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, record.Error.Error()}})

@@ -9,5 +9,5 @@ type Booking struct {
 	Time        string `json:"time"`
 	Requirement string `json:"requirement"`
 	RoomID      uint   `json:"room_id"`
-	Room        Room   `gorm:"foreignKey:RoomID" json:"room"`
+	Room        Room   `json:"room"`
 }
