@@ -34,5 +34,5 @@ func GetBookingsByDate(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": date})
+	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": bookings})
 }
