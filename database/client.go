@@ -25,5 +25,6 @@ func Connect() {
 func Migrate() {
 	Db.AutoMigrate(&models.User{})
 	Db.AutoMigrate(&models.Room{})
+	Db.AutoMigrate(&models.Booking{})
 	log.Println("Database Migration Completed!")
 }
