@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 	"test/database"
 	"test/models"
 )
@@ -21,4 +22,17 @@ func CreateBooking(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"meta": models.Meta{true, "Success"}, "data": nil})
+}
+
+func GetBookingsByDate(c *gin.Context) {
+	date := strings.Replace(c.Query("date"), "-", "/", 1)
+	var bookings []models.Booking
+	record := database.Db.Where("date = ?", date).Find(&bookings)
+
+	if record.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, record.Error.Error()}})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": bookings})
 }

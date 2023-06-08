@@ -14,9 +14,9 @@ func GetAllRooms(c *gin.Context) {
 	record := database.Db.Where("building = ?", building).Find(&rooms)
 
 	if record.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"meta": &models.Meta{false, record.Error.Error()}})
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, record.Error.Error()}})
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"meta": &models.Meta{true, "Success"}, "data": rooms})
+	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": rooms})
 }
