@@ -23,6 +23,7 @@ func main() {
 	r.POST("/user/register", controllers.RegisterUser)
 	r.POST("/user/login", controllers.GenerateToken)
 	r.GET("/:building/rooms", controllers.GetAllRooms)
+	r.POST("/booking/create", controllers.CreateBooking)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
