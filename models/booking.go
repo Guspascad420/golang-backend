@@ -9,5 +9,4 @@ type Booking struct {
 	Time        string `json:"time"`
 	Requirement string `json:"requirement"`
 	RoomID      uint   `json:"room_id"`
-	Room        Room   `json:"room"`
 }
