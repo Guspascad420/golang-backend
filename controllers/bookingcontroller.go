@@ -6,19 +6,10 @@ import (
 	"strings"
 	"test/database"
 	"test/models"
-	"time"
 )
 
 func CreateBooking(c *gin.Context) {
 	var booking models.Booking
-
-	date, err := time.Parse("02/01/2006", "20/09/2023")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"meta": models.Meta{Message: err.Error()}})
-		c.Abort()
-		return
-	}
-	booking.Date = date
 
 	if err := c.ShouldBindJSON(&booking); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"meta": models.Meta{Message: err.Error() + "sknmdjfenwe"}})
