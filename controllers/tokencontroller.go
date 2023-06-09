@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"errors"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -58,22 +58,24 @@ func ExtractToken(c *gin.Context) string {
 	return ""
 }
 
-func ExtractEmail(c *gin.Context) (interface{}, error) {
-	tokenString := ExtractToken(c)
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte("qQH82DVoGXjCQ76pJAt04jeyuR33RTP2"), nil
-	})
+func ExtractEmail(c *gin.Context) (string, error) {
+	signedToken := ExtractToken(c)
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&auth.JWTClaim{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte("F)J@NcQfTjWnZr4u7x!A%D*G-KaPdSgV"), nil
+		},
+	)
 	if err != nil {
-		return 0, err
+		return "", err
 	}
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if ok && token.Valid {
-		return claims["email"], nil
+	claims, ok := token.Claims.(*auth.JWTClaim)
+	if !ok {
+		err = errors.New("couldn't parse claims")
+		return "", err
 	}
-	return 0, nil
+	return claims.Email, nil
 }
 
 func GetEmail(c *gin.Context) {

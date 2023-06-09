@@ -32,7 +32,7 @@ func ValidateToken(signedToken string) (err error) {
 		signedToken,
 		&JWTClaim{},
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(jwtKey), nil
+			return jwtKey, nil
 		},
 	)
 	if err != nil {
