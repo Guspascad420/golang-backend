@@ -12,7 +12,7 @@ import (
 func CreateBooking(c *gin.Context) {
 	var booking models.Booking
 
-	date, err := time.Parse("02/01/2006", booking.Date.Format("02/01/2006"))
+	date, err := time.Parse("02/01/2006", "20/09/2023")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"meta": models.Meta{Message: err.Error()}})
 		c.Abort()
