@@ -95,5 +95,5 @@ func GetUserProfile(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{false, "success"}, "data": email})
+	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{false, "success"}, "data": user})
 }
