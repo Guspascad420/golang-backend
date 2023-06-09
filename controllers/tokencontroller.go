@@ -46,20 +46,23 @@ func GenerateToken(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": models.LoginResponse{tokenString}})
 }
 
-func ExtractToken(c *gin.Context) string {
+func ExtractToken(c *gin.Context) (string, error) {
 	token := c.Query("token")
 	if token != "" {
-		return token
+		return token, nil
 	}
 	bearerToken := c.Request.Header.Get("Authorization")
 	if len(strings.Split(bearerToken, " ")) == 2 {
-		return strings.Split(bearerToken, " ")[1]
+		return strings.Split(bearerToken, " ")[1], nil
 	}
-	return ""
+	return "", errors.New("Unauthorized Error: Access Denied")
 }
 
 func ExtractEmail(c *gin.Context) (string, error) {
-	signedToken := ExtractToken(c)
+	signedToken, err := ExtractToken(c)
+	if err != nil {
+		return "", err
+	}
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&auth.JWTClaim{},
@@ -82,7 +85,7 @@ func GetUserProfile(c *gin.Context) {
 	var user models.User
 	email, err := ExtractEmail(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, err.Error()}})
+		c.JSON(http.StatusUnauthorized, gin.H{"meta": models.Meta{false, err.Error()}})
 		c.Abort()
 		return
 	}
