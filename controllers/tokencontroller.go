@@ -80,22 +80,3 @@ func ExtractEmail(c *gin.Context) (string, error) {
 	}
 	return claims.Email, nil
 }
-
-func GetUserProfile(c *gin.Context) {
-	var user models.User
-	email, err := ExtractEmail(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"meta": models.Meta{false, err.Error()}})
-		c.Abort()
-		return
-	}
-	record := database.Db.Where("email = ?", email).First(&user)
-	if record.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"meta": &models.Meta{false, record.Error.Error()}})
-		c.Abort()
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"meta": models.Meta{false, "success"},
-		"data": models.UserProfileResponse{user.ID, user.Name, user.Username, user.Email}})
-}
