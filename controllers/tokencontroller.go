@@ -16,34 +16,34 @@ type TokenRequest struct {
 	Password string `json:"password"`
 }
 
-func GenerateToken(context *gin.Context) {
+func GenerateToken(c *gin.Context) {
 	var request TokenRequest
 	var user models.User
-	if err := context.ShouldBindJSON(&request); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"meta": &models.Meta{false, err.Error()}})
-		context.Abort()
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"meta": &models.Meta{false, err.Error()}})
+		c.Abort()
 		return
 	}
 	// check if email exists and password is correct
 	record := database.Db.Where("email = ?", request.Email).First(&user)
 	if record.Error != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"meta": &models.Meta{false, record.Error.Error()}})
-		context.Abort()
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": &models.Meta{false, record.Error.Error()}})
+		c.Abort()
 		return
 	}
 	credentialError := user.CheckPassword(request.Password)
 	if credentialError != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"meta": models.Meta{false, "Invalid credentials"}})
-		context.Abort()
+		c.JSON(http.StatusUnauthorized, gin.H{"meta": models.Meta{false, "Invalid credentials"}})
+		c.Abort()
 		return
 	}
 	tokenString, err := auth.GenerateJWT(user.Email, user.Username)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, err.Error()}})
-		context.Abort()
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, err.Error()}})
+		c.Abort()
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": models.LoginResponse{tokenString}})
+	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": models.LoginResponse{tokenString}})
 }
 
 func ExtractToken(c *gin.Context) string {
@@ -78,10 +78,17 @@ func ExtractEmail(c *gin.Context) (string, error) {
 	return claims.Email, nil
 }
 
-func GetEmail(c *gin.Context) {
+func GetUserProfile(c *gin.Context) {
+	var user models.User
 	email, err := ExtractEmail(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, err.Error()}})
+		c.Abort()
+		return
+	}
+	record := database.Db.Where("email = ?", email).First(&user)
+	if record.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": &models.Meta{false, record.Error.Error()}})
 		c.Abort()
 		return
 	}
