@@ -26,6 +26,7 @@ func main() {
 	r.POST("/bookings/create", controllers.CreateBooking)
 	r.GET("/bookings", controllers.GetBookingsByDate)
 	r.GET("/user/profile", controllers.GetUserProfile)
+	r.GET("/user/bookings", controllers.GetUserBookings)
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
