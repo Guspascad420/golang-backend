@@ -50,7 +50,7 @@ func GetUserProfile(c *gin.Context) {
 
 func GetUserBookings(c *gin.Context) {
 	userId := c.Query("userId")
-	var bookings models.Booking
+	var bookings []models.Booking
 
 	record := database.Db.Where("user_id = ?", userId).Where("date > ?", time.Now()).Find(&bookings)
 	if record.Error != nil {
