@@ -23,7 +23,7 @@ func main() {
 	r.POST("/user/register", controllers.RegisterUser)
 	r.POST("/user/login", controllers.GenerateToken)
 	r.GET("/:building/rooms", controllers.GetAllRooms)
-	r.POST("/bookings/create", controllers.CreateBooking)
+	r.POST("/user/bookings/create", controllers.CreateBooking)
 	r.GET("/bookings", controllers.GetBookingsByDate)
 	r.GET("/user/profile", controllers.GetUserProfile)
 	r.GET("/user/bookings", controllers.GetUserBookings)
