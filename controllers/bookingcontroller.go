@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 	"test/database"
 	"test/models"
@@ -36,4 +37,33 @@ func GetBookingsByDate(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "Success"}, "data": bookings})
+}
+
+func EditBooking(c *gin.Context) {
+	var booking models.Booking
+
+	if err := c.ShouldBindJSON(&booking); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"meta": models.Meta{Message: err.Error()}})
+		c.Abort()
+		return
+	}
+
+	update := database.Db.Save(&booking)
+	if update.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, update.Error.Error()}})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "successfully updated"}, "data": nil})
+}
+
+func DeleteBooking(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	deleteRec := database.Db.Delete(&models.Booking{}, id)
+	if deleteRec.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, deleteRec.Error.Error()}})
+		c.Abort()
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"meta": models.Meta{true, "successfully deleted"}, "data": nil})
 }
