@@ -41,6 +41,7 @@ func GetBookingsByDate(c *gin.Context) {
 
 func EditBooking(c *gin.Context) {
 	var booking models.Booking
+	id, _ := strconv.Atoi(c.Param("id"))
 
 	if err := c.ShouldBindJSON(&booking); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"meta": models.Meta{Message: err.Error()}})
@@ -48,7 +49,7 @@ func EditBooking(c *gin.Context) {
 		return
 	}
 
-	update := database.Db.Save(&booking)
+	update := database.Db.Model(models.Booking{ID: uint(id)}).Updates(booking)
 	if update.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{false, update.Error.Error()}})
 		c.Abort()
