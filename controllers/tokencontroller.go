@@ -16,6 +16,33 @@ type TokenRequest struct {
 	Password string `json:"password"`
 }
 
+func RegisterUser(c *gin.Context) {
+	var user models.User
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	if err := user.HashPassword(user.Password); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.Abort()
+		return
+	}
+	record := database.Db.Create(&user)
+	if record.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": record.Error.Error()})
+		c.Abort()
+		return
+	}
+	jwtToken, err := auth.GenerateJWT(user.Email, user.Username)
+	if err != nil {
+		//Handle Error
+		c.JSON(http.StatusInternalServerError, gin.H{"meta": models.Meta{Message: err.Error()}})
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{"meta": models.Meta{true, "success"}, "token": jwtToken})
+}
+
 func GenerateToken(c *gin.Context) {
 	var request TokenRequest
 	var user models.User
